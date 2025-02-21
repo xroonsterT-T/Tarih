@@ -1,0 +1,204 @@
+<!doctype html>
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Drag and Drop Quiz</title>
+  <style>
+    /* Genel konteyner */
+    .container {
+      max-width: 800px;
+      margin: 20px auto;
+      padding: 20px;
+      font-family: Arial, sans-serif;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    /* Soru kutusu */
+    .question {
+      background: rgba(64, 224, 208, 0.2); /* Hafif saydam turkuaz */
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 8px;
+      position: relative;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+
+    /* Dropzone (cevabın yerleştirileceği alan) */
+    .dropzone {
+      display: inline-block;
+      min-width: 100px;
+      min-height: 30px;
+      background: rgba(64, 224, 208, 0.5); /* Biraz daha yoğun turkuaz */
+      border-radius: 8px;
+      padding: 5px;
+      vertical-align: middle;
+      text-align: center;
+      margin: 0 5px;
+    }
+
+    /* Geri bildirim ikonları */
+    .feedback {
+      position: absolute;
+      right: 10px;
+      top: 10px;
+      font-size: 24px;
+    }
+
+    /* Cevap havuzu */
+    .answer-pool {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+      margin: 30px 0;
+    }
+
+    /* Sürüklenebilir cevap kutuları */
+    .answer {
+      background: rgba(255, 255, 255, 0.8); /* Hafif saydam beyaz */
+      border-radius: 8px;
+      padding: 10px 15px;
+      cursor: grab;
+      user-select: none;
+      text-align: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+      transition: transform 0.2s;
+    }
+
+    .answer:active {
+      transform: scale(0.98);
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+    <h2>Drag and Drop Quiz</h2>
+    
+    <!-- Soru 1 -->
+    <div class="question" data-answer="İsmet Paşa">
+      Mudanya Ateşkes Antlaşması’nda TBMM’yi 
+      <span class="dropzone" data-answer="İsmet Paşa"></span>temsil etmiştir.
+      <span class="feedback"></span>
+  </div>
+
+    <!-- Soru 2 -->
+    <div class="question" data-answer="İzmir">
+      TBMM Hükûmeti barış görüşmelerinin 
+      <span class="dropzone" data-answer="İzmir"></span> şehrinde toplanmasını istemiştir.
+      <span class="feedback"></span>
+    </div>
+
+    <!-- Soru 3 -->
+    <div class="question" data-answer="saltanat">
+      İtilaf Devletleri’nin Lozan Konferansına İstanbul Hükûmeti’ni davet etmeleri üzerine 
+      <span class="dropzone" data-answer="saltanat"></span> kaldırıldı.
+      <span class="feedback"></span>
+    </div>
+
+    <!-- Soru 4 -->
+    <div class="question" data-answer="Fransa">
+      Lozan Barış Antlaşması’nda Suriye ile sınırımız 
+      <span class="dropzone" data-answer="Fransa"></span> ile imzalanan Ankara Antlaşması’nda olduğu gibi korunacaktı.
+      <span class="feedback"></span>
+    </div>
+
+    <!-- Soru 5 -->
+    <div class="question" data-answer="Meriç Nehri">
+      Lozan Barış Antlaşması ile Yunanistan ile sınırımız 
+      <span class="dropzone" data-answer="Meriç Nehri"></span> kabul edildi.
+      <span class="feedback"></span>
+    </div>
+
+    <!-- Soru 6 -->
+    <div class="question" data-answer="kapitülasyonlar">
+      Lozan Barış Antlaşması’nda ekonomik kalkınmamız önündeki engel olan 
+      <span class="dropzone" data-answer="kapitülasyonlar"></span> kaldırıldı.
+      <span class="feedback"></span>
+    </div>
+
+    <!-- Cevap havuzu (2 yanıltıcı cevap eklendi) -->
+    <div class="answer-pool">
+      <div class="answer" draggable="true" data-answer="İsmet Paşa">İsmet Paşa</div>
+      <div class="answer" draggable="true" data-answer="İzmir">İzmir</div>
+      <div class="answer" draggable="true" data-answer="saltanat">saltanat</div>
+      <div class="answer" draggable="true" data-answer="Fransa">Fransa</div>
+      <div class="answer" draggable="true" data-answer="Meriç Nehri">Meriç Nehri</div>
+      <div class="answer" draggable="true" data-answer="kapitülasyonlar">kapitülasyonlar</div>
+      <div class="answer" draggable="true" data-answer="Fevzi Çakmak">Fevzi Çakmak</div>
+      <div class="answer" draggable="true" data-answer="Mustafa Kemal">Lozan</div>
+    </div>
+
+    <!-- Ses ekleme için kod dizisi (doğru/yanlış seslerini buraya ekleyebilirsiniz) -->
+    <script>
+      // Örnek: 
+      // const correctSound = new Audio('correct.mp3');
+      // const wrongSound = new Audio('wrong.mp3');
+    </script>
+
+    <!-- Sürükle bırak (drag and drop) işlevselliği ve cevap havuzunun karıştırılması -->
+    <script>
+      // Drag and Drop İşlevselliği
+      const answers = document.querySelectorAll('.answer');
+      const dropzones = document.querySelectorAll('.dropzone');
+
+      answers.forEach(answer => {
+        answer.addEventListener('dragstart', dragStart);
+      });
+
+      dropzones.forEach(zone => {
+        zone.addEventListener('dragover', dragOver);
+        zone.addEventListener('drop', drop);
+      });
+
+      function dragStart(e) {
+        e.dataTransfer.setData('text/plain', e.target.getAttribute('data-answer'));
+      }
+
+      function dragOver(e) {
+        e.preventDefault();
+      }
+
+      function drop(e) {
+        e.preventDefault();
+        const draggedAnswer = e.dataTransfer.getData('text/plain');
+        const correctAnswer = e.target.getAttribute('data-answer');
+        const feedback = e.target.parentElement.querySelector('.feedback');
+
+        if (draggedAnswer === correctAnswer) {
+          // Doğru cevap: cevabı kutucuğa yerleştir
+          e.target.textContent = draggedAnswer;
+          e.target.style.pointerEvents = 'none'; // Tekrar değiştirilmesin
+          feedback.textContent = '✔'; // Tik işareti
+          // correctSound.play(); // Doğru sesini buraya ekleyin
+        } else {
+          // Yanlış cevap: geçici çarpı işareti göster
+          feedback.textContent = '✖'; // Çarpı işareti
+          // wrongSound.play(); // Yanlış sesini buraya ekleyin
+          setTimeout(() => {
+            feedback.textContent = '';
+          }, 1000);
+        }
+      }
+
+      // Cevap havuzundaki cevapların yerlerini karıştırma fonksiyonu
+      function shuffleAnswers() {
+        const pool = document.querySelector('.answer-pool');
+        for (let i = pool.children.length; i >= 0; i--) {
+          pool.appendChild(pool.children[Math.floor(Math.random() * i)]);
+        }
+      }
+
+      document.addEventListener('DOMContentLoaded', function() {
+        shuffleAnswers();
+      });
+    </script>
+  </div>
+</body>
+</html>
